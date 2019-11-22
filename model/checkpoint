@@ -1,2 +1,4 @@
-model_checkpoint_path: "mnist_HL5_sigmoid"
-all_model_checkpoint_paths: "mnist_HL5_sigmoid"
+model_checkpoint_path: "linRegression-500"
+all_model_checkpoint_paths: "linRegression-300"
+all_model_checkpoint_paths: "linRegression-400"
+all_model_checkpoint_paths: "linRegression-500"
