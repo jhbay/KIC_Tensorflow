@@ -1,0 +1,2 @@
+1. google -> _DL로 옮겨서 py, pynb로 로드
+2. tensorflow 1.8 ->노트북작업.
