@@ -103,3 +103,10 @@ for i in range(2000 + 1) :
 
 # close summary writer object
 summary_writer.close()
+
+
+
+#######################
+# tensorboard --logdir=./cnn_logs --port=6008
+# http://desktop-6l6s8t2:6008/
+# 
