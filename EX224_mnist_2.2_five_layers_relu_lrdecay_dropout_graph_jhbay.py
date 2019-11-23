@@ -124,7 +124,7 @@ for i in range(10000 + 1) :
 
     # the backpropagation training step
     # training - 학습시엔 make good fit을 위한 노드비율조정.
-    sess.run(train_step, {X: batch_X, Y_: batch_Y, pkeep: 0.5, step: i})
+    sess.run(train_step, {X: batch_X, Y_: batch_Y, pkeep: 0.85, step: i})
 
 
 # draw graph : accuracy
