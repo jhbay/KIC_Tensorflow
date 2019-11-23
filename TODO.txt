@@ -1,2 +1,13 @@
-1. google -> _DL�� �Űܼ� py, pynb�� �ε�
-2. tensorflow 1.8 ->��Ʈ���۾�.
+# 각 메서드별
+count 100개마다 평균치
+count 100개마다 min, max, dy/dx
+-> print
+평균치의 마지막 6개 평균치 -> accuracy, loss.
+-> print!!
+
+test - running time.
+-> print
+
+
+
+
