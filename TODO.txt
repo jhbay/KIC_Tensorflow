@@ -6,7 +6,7 @@ count 100개마다 min, max, dy/dx
 -> print!!
 
 test - running time.
--> print
+-> print 
 
 
 
