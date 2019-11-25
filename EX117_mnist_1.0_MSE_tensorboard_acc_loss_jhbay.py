@@ -13,11 +13,11 @@ from datetime import datetime
 
 def get_logdir() :
 	now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-	root_logdir = './cnn_logs'
+	root_logdir = './test_logs'
 	logdir = "{}/run-{}/".format(root_logdir, now)
 	return logdir
 
-tf.set_random_seed(0)
+# tf.set_random_seed(0)
 
 # neural network with 1 layer of 10 softmax neurons
 #
