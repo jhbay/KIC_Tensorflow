@@ -10,13 +10,43 @@ print("Tensorflow version " + tf.__version__)
 import matplotlib.pyplot as plt
 import numpy as np
 
+import pandas as pd
+from statistics import *
+
 from datetime import datetime
 
-def get_logdir() :
+def get_logdir(exerciseName) :
 	now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 	root_logdir = './cnn_logs'
-	logdir = "{}/run-{}/".format(root_logdir, now)
+	logdir = "{}/run-{}/".format(root_logdir, exerciseName + now)
 	return logdir
+
+def getStats(dataList, modelName, listSize):
+    minList = []
+    maxList = []
+    meanList = []
+    idxList = []
+    for i in range(0, len(dataList), listSize): # start, stop, step
+        partList = dataList[i:i + listSize]
+        print('index::{} ~ {} // mean: {}'.format(i, i + listSize, mean(partList) ) )
+        minList.append(min(partList))
+        maxList.append(max(partList))
+        meanList.append(mean(partList))
+        idxList.append(i + listSize)
+    statResult = pd.DataFrame({modelName+'_min':minList, modelName+'_max':maxList, modelName+'_mean':meanList }, index = idxList)
+    # print('statResult::', statResult)
+    return statResult
+
+def getStatSet(dataDict, fileName, listSize):
+    statSetResult = pd.DataFrame()
+    for modelName in dataDict.keys():
+        print('dataDict[modelName]:{}, modelName:{}, listSize:{}'.format(dataDict[modelName][:5], modelName, listSize))
+        statSetResult = pd.concat([statSetResult, getStats(dataDict[modelName], modelName, listSize)], axis=1)  #[statSetResult, list(map(float, getStats(dataDict[modelName], modelName, listSize)))]
+
+    print('statSetResult::', statSetResult)
+    statSetResult.to_csv(fileName + "_Result.csv", mode='w')
+
+
 
 tf.set_random_seed(0)
 
@@ -101,7 +131,7 @@ tf.summary.scalar("accuracy", accuracy)
 # Merge all summaries into a single op
 merged_summary_op = tf.summary.merge_all()
 # create tensorboard writer object
-log_folder = get_logdir()
+log_folder = get_logdir('EX305_CNN_')
 summary_writer = tf.summary.FileWriter(log_folder, graph=tf.get_default_graph())
 
 # init
@@ -114,13 +144,18 @@ train_acc_list = []
 test_acc_list = []
 train_loss_list = []
 test_loss_list = []
+
+totalRun = 100;
+splitCntBy = 25;
+
 # run
-for i in range(300 + 1) :
+for i in range(totalRun + 1) :
 
 	batch_X, batch_Y = mnist.train.next_batch(100)
 	a, c = sess.run([accuracy, cross_entropy],  feed_dict={X: batch_X, Y_: batch_Y, step: i})
-	print("training : ", i, ' accuracy = ', '{:7.4f}'.format(a), ' loss = ', c)
-
+	
+	if(i%splitCntBy == 0):
+		print("training : ", i, ' accuracy = ', '{:7.4f}'.format(a), ' loss = ', c)
 	train_acc_list.append(a)
 	train_loss_list.append(c)
 
@@ -132,12 +167,22 @@ for i in range(300 + 1) :
 	# test_batch_X, test_batch_Y = mnist.test.next_batch(100)  ==> never use mini batch!!
 	# sess.run(train_step, feed_dict={X: test_batch_X, Y_: test_batch_Y})  ==> never run train_step on test data!!
 	a, c = sess.run([accuracy, cross_entropy], feed_dict={X: mnist.test.images, Y_: mnist.test.labels})
-	print("testing* : ",i, ' accuracy = ', '{:7.4f}'.format(a), ' loss = ', c)
+	if(i%splitCntBy == 0):
+		print("testing* : ",i, ' accuracy = ', '{:7.4f}'.format(a), ' loss = ', c)
 	test_acc_list.append(a)
 	test_loss_list.append(c)
 
 	# the backpropagation training step
 	sess.run(train_step, {X: batch_X, Y_: batch_Y, step: i})
+
+# print('train_acc_list::', train_acc_list)
+# print('test_acc_list::', test_acc_list)
+# print('train_loss_list::', train_loss_list)
+# print('test_loss_list::', test_loss_list)
+
+dataDict = {'train_acc':train_acc_list,'test_acc':test_acc_list,'train_loss':train_loss_list,'test_loss':test_loss_list}
+getStatSet(dataDict, "../python_DL/cnn_logs/time", splitCntBy)
+
 
 # draw graph : accuracy
 x = np.arange(len(train_acc_list))
