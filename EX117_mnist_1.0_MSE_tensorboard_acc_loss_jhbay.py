@@ -13,10 +13,11 @@ from datetime import datetime
 
 def get_logdir() :
 	now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-	root_logdir = './test_logs'
+	root_logdir = './cnn_logs'
 	logdir = "{}/run-{}/".format(root_logdir, now)
 	return logdir
 
+## RnadonState 할당으로 고정.
 # tf.set_random_seed(0)
 
 # neural network with 1 layer of 10 softmax neurons
@@ -84,11 +85,17 @@ test_summary_writer = tf.summary.FileWriter(test_log_folder, graph=tf.get_defaul
 
 # init
 init = tf.global_variables_initializer()
-sess = tf.Session()
+
+gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.5)
+
+sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
+# sess = tf.Session()
 sess.run(init)
 
 
 # run
+print("change --- GPU usage options - 50% ")
 for i in range(2000 + 1) :
 
 	batch_X, batch_Y = mnist.train.next_batch(100)
